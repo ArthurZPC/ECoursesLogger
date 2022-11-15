@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  ecourseslogger:
+    image: ${DOCKER_REGISTRY-}ecourseslogger
+    build:
+      context: .
+      dockerfile: ECoursesLogger/Dockerfile

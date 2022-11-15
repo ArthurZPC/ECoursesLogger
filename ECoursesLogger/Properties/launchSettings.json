@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "ECoursesLogger": {
+      "commandName": "Project"
+    },
+    "Docker": {
+      "commandName": "Docker"
+    }
+  }
+}
