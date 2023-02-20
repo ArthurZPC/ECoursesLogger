@@ -3,6 +3,7 @@ using ECoursesLogger.Data.Interfaces;
 using ECoursesLogger.Data.Repositories;
 using ECoursesLogger.RabbitMQ.Configuration;
 using ECoursesLogger.RabbitMQ.Services;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -27,13 +28,19 @@ public class Program
             {
                 var configuration = hostingContext.Configuration;
 
-                services.AddSqlServer<ECoursesLoggerContext>(configuration.GetConnectionString("DefaultConnection")!);
+                services.AddSqlServer<ECoursesLoggerContext>(configuration.GetConnectionString("DockerConnection")!);
                 services.Configure<RabbitMQOptions>(configuration.GetSection("RabbitMQ"));
 
                 services.AddTransient<ICommandMessageRepository, CommandMessageRepository>();
                 services.AddHostedService<RabbitMQService>();
             })
             .Build();
+
+        using var scope = builder.Services.CreateScope();
+
+        var dbContext = scope.ServiceProvider.GetService<ECoursesLoggerContext>()!;
+
+        await dbContext.Database.MigrateAsync();
 
         await builder.RunAsync();
     }
